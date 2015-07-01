@@ -20,23 +20,29 @@ parser.add_option("-e", "--gps-end-time",   metavar = "gps_end_time", help = "En
 
 parser.add_option("-c", "--channel", metavar = "channel", help="Channel name.")
 
+parser.add_option("-i", "--ifo", metavar = "ifo", help="IFO")
+
+parser.add_option("-m", "--model-info", metavar = "model_info", help = "information about front end models")
+
 args, others = parser.parse_args()
 
 channel = args.channel
 gps_start = int(args.gps_start_time)
 gps_end   = int(args.gps_end_time)
-ifo = 'H'
-frames = 'H1_R'
+ifo = args.ifo
+model_info = args.model_info
+
+if ifo == 'L1':
+	frames = 'L1_R'
+else:
+	frames = 'H1_R'
 
 # generate frame cache and connection
 connection = datafind.GWDataFindHTTPConnection()
 cache = connection.find_frame_urls(ifo, frames, gps_start, gps_end, urltype='file')
 
 # read in master list that contains ADC model numbers, names, and cumulative status
-model_list = []
-model_read = open("/home/tjmassin/adc_overflow_condor/master/h1_model_info.txt")
-for line in model_read.readlines():
-	model_list.append(map(str,line.split()))
+model_list = loadtxt(model_info,dtype=str)
 	
 # pick off ndcuid list to enable direct searching of channels for overflow status
 ndcuid_list = []
