@@ -3,3 +3,4 @@ pass IFO as argument instead of hard coding
 maybe switch to config file reading
 double check condor implementation
 make python code more modular (more general functions)
+add output directory as argument
