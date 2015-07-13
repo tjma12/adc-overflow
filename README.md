@@ -19,7 +19,8 @@ This will parse the .adl file for each model, extract its ndcuid, and annotate t
 Syntax: 
 > ./find_models.sh {user_apps directory} {output directory} {H1,L1}
 
-Example call: ./find_models.sh /home/tjmassin/svn/cds_user_apps/ /home/tjmassin/adc_overflow/test/model_info/ H1
+Example call: 
+> ./find_models.sh /home/tjmassin/svn/cds_user_apps/ /home/tjmassin/adc_overflow/test/model_info/ H1
 
 4. Run generate_overflows_condor.sh 
 
