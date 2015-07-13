@@ -6,11 +6,11 @@ The purpose of this code is to generate an appropriate set of condor dag and sub
 
 Instructions for running on an LDAS cluster:
 
-1. Source GWpy user environment
+##### 1. Source GWpy user environment
 
-2. Update (or checkout) the cds_user_apps SVN that contains the simulink models that run in the front end and monitor saturation events.
+##### 2. Update (or checkout) the cds_user_apps SVN that contains the simulink models that run in the front end and monitor saturation events.
 
-3. Run find_models.sh 
+##### 3. Run find_models.sh 
 
 This script will generate an annotated list of models running on the current system. 
 
@@ -22,7 +22,7 @@ Syntax:
 Example call: 
 > ./find_models.sh /home/tjmassin/svn/cds_user_apps/ /home/tjmassin/adc_overflow/test/model_info/ H1
 
-4. Run generate_overflows_condor.sh 
+##### 4. Run generate_overflows_condor.sh 
 
 This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready.
 
