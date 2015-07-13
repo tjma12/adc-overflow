@@ -16,6 +16,10 @@ This script will generate an annotated list of models running on the current sys
 
 This will parse the .adl file for each model, extract its ndcuid, and annotate the model as either a cumulative overflow channel or a non-cumulative overflow channel.
 
+Syntax: ./find_models.sh {user_apps directory} {output directory} {H1,L1}
+
+Example call: ./find_models.sh /home/tjmassin/svn/cds_user_apps/ /home/tjmassin/adc_overflow/test/model_info/ H1
+
 4. Run generate_overflows_condor.sh 
 
 This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready.

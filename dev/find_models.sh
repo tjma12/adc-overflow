@@ -3,6 +3,8 @@ userapps_dir=$1
 outdir=$2
 ifo=$3
 
+mkdir -p $outdir
+
 if [ ifo = "L1" ]; then
   find $1/trunk/*/l1/models/ -maxdepth 2 | grep '.mdl' > $2/models_temp.txt 
 else
