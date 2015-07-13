@@ -1,4 +1,4 @@
-from numpy import *
+import numpy as np
 from glue.ligolw import utils, ligolw, lsctables
 from glue.lal import LIGOTimeGPS
 from glue import lal
@@ -20,9 +20,11 @@ parser.add_option("-e", "--gps-end-time",   metavar = "gps_end_time", help = "En
 
 parser.add_option("-c", "--channel", metavar = "channel", help="Channel name.")
 
-parser.add_option("-i", "--ifo", metavar = "ifo", help="IFO")
+parser.add_option("-i", "--ifo", metavar = "ifo", help="IFO, L or H")
 
 parser.add_option("-m", "--model-info", metavar = "model_info", help = "information about front end models")
+
+parser.add_option("-o", "--outdir", metavar = "outdir", help = "base output directory")
 
 args, others = parser.parse_args()
 
@@ -31,8 +33,17 @@ gps_start = int(args.gps_start_time)
 gps_end   = int(args.gps_end_time)
 ifo = args.ifo
 model_info = args.model_info
+outdir = args.outdir
+
+#sanitize IFO input
 
 if ifo == 'L1':
+	ifo = 'L'
+
+if ifo == 'H1':
+	ifo = 'H'
+
+if ifo == 'L':
 	frames = 'L1_R'
 else:
 	frames = 'H1_R'
@@ -42,7 +53,7 @@ connection = datafind.GWDataFindHTTPConnection()
 cache = connection.find_frame_urls(ifo, frames, gps_start, gps_end, urltype='file')
 
 # read in master list that contains ADC model numbers, names, and cumulative status
-model_list = loadtxt(model_info,dtype=str)
+model_list = np.loadtxt(model_info,dtype=str)
 	
 # pick off ndcuid list to enable direct searching of channels for overflow status
 ndcuid_list = []
@@ -70,7 +81,7 @@ def startSegTest(x,y,z):
 # check if an overflow channel is cumulative by crosschecking ndcuid_list and model_list
 # model list lines are recorded as <model_name.mdl> <cumulative status> <ndcuid=num>
 def checkCumulative(chan_name,model_list,ndcuid_list):
-	ID = 'ndcuid=' + str(chan_name)[str(chan_name).find('-')+1:str(chan_name).find('_')]
+	ID = 'ndcuid=' + str(chan_name).replace('-','_').split('_')[1]
 	if (model_list[ndcuid_list.index(ID)][1] == 'cumulative'):
 		return True
 	else:
@@ -79,7 +90,10 @@ def checkCumulative(chan_name,model_list,ndcuid_list):
 
 data=TimeSeries.read(cache, channel, start=gps_start, end=gps_end)
 
-time_vec = linspace(gps_start,gps_end,(gps_end - gps_start)*16,endpoint=False)
+time_vec=data.times.value
+
+# ignore this, it was made before gwpy exported a time vector
+#time_vec = linspace(gps_start,gps_end,(gps_end - gps_start)*16,endpoint=False)
 
 
 '''
@@ -97,20 +111,20 @@ trigger vector  if it's an overflow transition.
 trig_segs = seg.segmentlist()
 
 if checkCumulative(channel,model_list,ndcuid_list):
-	for j in arange(size(data,0)):
-		if (0 < j < (size(data,0) - 1)):
+	for j in np.arange(np.size(data,0)):
+		if (0 < j < (np.size(data,0) - 1)):
 			if startCumuSegTest(data[j-1],data[j],data[j+1]):
 				trig_segs |= seg.segmentlist([seg.segment(time_vec[j+1],time_vec[j+1]+1)])
 else:
-	for j in arange(size(data,0)):
-		if (0 < j < (size(data,0) - 1)):
+	for j in np.arange(np.size(data,0)):
+		if (0 < j < (np.size(data,0) - 1)):
 			if startSegTest(data[j-1],data[j],data[j+1]):
 				trig_segs |= seg.segmentlist([seg.segment(time_vec[j+1],time_vec[j+1]+1)])
 						
 
 trig_segs = trig_segs.coalesce()
 
-if (size(trig_segs) == 0):
+if (np.size(trig_segs) == 0):
 	print "No triggers found for " + str(channel)
 	exit()	
 else:
@@ -119,11 +133,11 @@ else:
 	
 # make vectors of up and down transitions and feed into XML output
 up_trigger_vec = []	
-for i in arange(size(trig_segs,0)):
+for i in np.arange(np.size(trig_segs,0)):
 	up_trigger_vec.append(trig_segs[i][0] - 0.5)
 	
 down_trigger_vec = []
-for i in arange(size(trig_segs,0)):
+for i in np.arange(np.size(trig_segs,0)):
 	down_trigger_vec.append(trig_segs[i][1] - 0.5)
 
 
@@ -132,9 +146,9 @@ up_trig_times = map(LIGOTimeGPS,map(float,up_trigger_vec))
 down_trig_times = map(LIGOTimeGPS,map(float,down_trigger_vec))
 
 # create mocked up frequency and SNR vectors to fill in XML tables
-freqs = empty(size(up_trigger_vec))
+freqs = np.empty(np.size(up_trigger_vec))
 freqs.fill(100)
-snrs = empty(size(up_trigger_vec))
+snrs = np.empty(np.size(up_trigger_vec))
 snrs.fill(10)
 
 
@@ -165,10 +179,10 @@ xmldoc_down = ligolw.Document()
 xmldoc_down.appendChild(ligolw.LIGO_LW())
 xmldoc_down.childNodes[0].appendChild(sngl_burst_table_down)
 
-directory_up = ("/home/tjmassin/triggers/POSTER5/" + channel[:2] + "/" + 
+directory_up = (outdir + '/' + channel[:2] + "/" + 
 channel[3:] + "_UP/" + str(gps_start)[:5] + "/")
 
-directory_down = ("/home/tjmassin/triggers/POSTER5/" + channel[:2] + "/" + 
+directory_down = (outdir + '/' + channel[:2] + "/" + 
 channel[3:] + "_DOWN/" + str(gps_start)[:5] + "/")
 
 if not os.path.exists(directory_up):

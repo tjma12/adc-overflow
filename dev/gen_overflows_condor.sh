@@ -2,9 +2,10 @@
 
 start_time=$1
 end_time=$2
+ifo=$3
+outdir=$4
 
-
-basedir="${HOME}/adc_overflow_condor/${start_time}_${end_time}"
+basedir="${outdir}/${start_time}_${end_time}"
 
 echo "Building directory structure at ${basedir}"
 
@@ -15,7 +16,7 @@ mkdir -p ${basedir}/condor_dag/log_${start_time}_ADC
 source /home/detchar/opt/gwpysoft/etc/gwpy-user-env.sh
 
 # find minute-trend frames and generate list of model-wide overflow channels
-frame=`gw_data_find -n -o H -t H1_M -s ${start_time} -e ${start_time} | head -n 1`
+frame=`gw_data_find -n -o ${ifo} -t ${ifo}1_M -s ${start_time} -e ${start_time} | head -n 1`
 chan_list="all_model_overflow_chans_${start_time}_${end_time}.txt"
 
 FrChannels ${frame} | grep 'FEC' | grep 'ACCUM_OVERFLOW' | grep 'max' | cut -d ' ' -f 1 > ${basedir}/${chan_list}
@@ -50,7 +51,7 @@ echo "Wrote ndcuid values of overflowing models to file ${overflow_ndcuid} "
 # generate list of individual ADC/DAC channels included in overflowing models
 followup_list="individual_overflow_chans_${start_time}_${end_time}.txt"
 
-rawframe=`gw_data_find -n -o H -t H1_R -s ${start_time} -e ${start_time} | head -n 1`
+rawframe=`gw_data_find -n -o ${ifo} -t ${ifo}1_R -s ${start_time} -e ${start_time} | head -n 1`
 
 while read i; do
 	FrChannels ${rawframe} | grep 'FEC' | grep -E 'ADC_OVERFLOW_[0-9]' | grep "C-${i}_"

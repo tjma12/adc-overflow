@@ -1,3 +1,5 @@
+only FrChannels once and save in txt file
+
 pass model info as argument instead of hard coding
 pass IFO as argument instead of hard coding
 maybe switch to config file reading

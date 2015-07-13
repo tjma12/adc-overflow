@@ -27,7 +27,7 @@ cache = connection.find_frame_urls(ifo, frames, start_gps, end_gps, urltype='fil
 for chan in chan_list:
 
     chan1 = chan[:-1]
-    data1=TimeSeries.read(cache, chan1, start=start_gps, end=end_gps,nproc=8)
+    data1=TimeSeries.read(cache, chan1, start=start_gps, end=end_gps)
 
     if any(diff(data1)>0):
         print >> fP, chan1
