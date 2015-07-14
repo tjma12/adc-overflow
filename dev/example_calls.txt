@@ -1,0 +1,6 @@
+source /home/detchar/opt/gwpysoft/etc/gwpy-user-env.sh
+
+bash gen_overflows_condor.sh 1118019595 1118019795 H /home/tjmassin/adc_overflow/test
+
+python gen_single_channel_trigs.py -s 1115721016 -e 1115721916 -c H1:FEC-18_ADC_OVERFLOW_4_13 -i H1 -m H1_model_info.txt -o /home/tjmassin/adc_overflow/triggers
+
