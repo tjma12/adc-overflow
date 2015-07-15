@@ -8,13 +8,19 @@ Instructions for running on an LDAS cluster:
 
 #### 1. Source GWpy user environment
 
+source /home/detchar/opt/gwpysoft/etc/gwpy-user-env.sh
+
 #### 2. Update (or checkout) the cds_user_apps SVN that contains the simulink models that run in the front end and monitor saturation events.
+
+svn co https://redoubt.ligo-wa.caltech.edu/svn/cds_user_apps/trunk --username albert.einstein
 
 #### 3. Run find_models.sh 
 
 This script will generate an annotated list of models running on the current system. 
 
 This will parse the .adl file for each model, extract its ndcuid, and annotate the model as either a cumulative overflow channel or a non-cumulative overflow channel.
+
+Be sure to provide the directory that <i>contains</i> the trunk directory of cds_user_apps.
 
 Syntax: 
 > ./find_models.sh {user_apps directory} {output directory} {H1,L1}
