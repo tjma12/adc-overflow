@@ -36,11 +36,11 @@ Example call:
 This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready. It will generate a directory structure containing log files and executables in the designated output directory.
 
 Syntax:
-> ./gen_overflows_condor.sh {start_gps} {end_gps} {L,H} {output directory}
+> ./gen_overflows_condor.sh {start_gps} {end_gps} {L,H} {output directory} {model info}
 
 Example call:
 
-> ./gen_overflows_condor.sh 1118019595 1118019795 H /home/tjmassin/adc_overflow/test
+> ./gen_overflows_condor.sh 1118019595 1118019795 H /home/tjmassin/adc_overflow/test /home/tjmassin/adc_overflow/test/model_info/H1_model_info.txt
 
 
 The process is as follows:
