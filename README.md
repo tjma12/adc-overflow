@@ -2,7 +2,7 @@
 This code base is used to search for ADC/DAC overflows in LIGO instruments.
 Developed by TJ Massinger for use in the LVC.
 
-The purpose of this code is to generate an appropriate set of condor dag and sub files to search for ADC/DAC overflows and generate sngl_burst XML files containing triggers. 
+The purpose of this code is to generate an appropriate set of condor dag and sub files to search for ADC/DAC overflows and generate sngl_burst XML files containing triggers.
 
 Instructions for running on an LDAS cluster:
 
@@ -22,15 +22,23 @@ Syntax:
 Example call: 
 > ./find_models.sh /home/tjmassin/svn/cds_user_apps/ /home/tjmassin/adc_overflow/test/model_info/ H1
 
-##### 4. Run generate_overflows_condor.sh 
+##### 4. Run gen_overflows_condor.sh 
 
-This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready.
+This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready. It will generate a directory structure containing log files and executables in the designated output directory.
+
+Syntax:
+> ./gen_overflows_condor.sh {start_gps} {end_gps} {L,H} {output directory}
+
+Example call:
+
+> ./gen_overflows_condor.sh 1118019595 1118019795 H /home/tjmassin/adc_overflow/test
+
 
 The process is as follows:
 
 a. Set up a directory structure to store all information regarding models and overflow channels, as well as condor log files.
 
-b. Grab model-wide cumulative overflow channels to see if any channel in a given model has overflowed during the time period of interest.
+b. Grab model-wide cumulative overflow channels to see if any channel in a given model has overflowed during the time period of interest. This is done using <b>plot_overflow_accum.py<b/>.
 
 c. Generate a list of models that have at least one overflow.
 
