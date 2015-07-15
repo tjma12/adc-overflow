@@ -4,6 +4,7 @@ start_time=$1
 end_time=$2
 ifo=$3
 outdir=$4
+model_info=$5
 
 basedir="${outdir}/${start_time}_${end_time}"
 
@@ -63,7 +64,7 @@ numchans=`wc -l ${basedir}/${followup_list} | cut -d ' ' -f 1`
 
 python make_dag_ADC.py ${numchans} ${start_time} ${end_time} ${basedir}
 
-python make_sub_ADC.py ${basedir} ${start_time} ${end_time} ${basedir}/${followup_list}
+python make_sub_ADC.py ${basedir} ${start_time} ${end_time} ${basedir}/${followup_list} ${ifo} ${model_info}
 
 cp gen_overflow_trigs.sh ${basedir}/condor_dag/gen_overflow_trigs.sh
 cp gen_single_channel_trigs.py ${basedir}/condor_dag/gen_single_channel_trigs.py
