@@ -38,7 +38,7 @@ The process is as follows:
 
 a. Set up a directory structure to store all information regarding models and overflow channels, as well as condor log files.
 
-b. Grab model-wide cumulative overflow channels to see if any channel in a given model has overflowed during the time period of interest. This is done using <b>plot_overflow_accum.py<b/>.
+b. Grab model-wide cumulative overflow channels to see if any channel in a given model has overflowed during the time period of interest. This is done using <b>plot_overflow_accum.py</b>.
 
 c. Generate a list of models that have at least one overflow.
 
