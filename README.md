@@ -2,7 +2,7 @@
 This code base is used to search for ADC/DAC overflows in LIGO instruments.
 Developed by TJ Massinger for use in the LVC.
 
-The purpose of this code is to generate an appropriate set of condor dag and sub files to search for ADC/DAC overflows and generate sngl_burst XML files containing triggers.
+The purpose of this code is to generate an appropriate set of condor dag and sub files to search for ADC/DAC overflows and generate sngl_burst XML files containing triggers. The generated DAG will call the executable <b>gen_overflow_trigs.sh</b>, which is a wrapper around the python script <b>gen_single_channel_trigs.py</b>.
 
 Instructions for running on an LDAS cluster:
 
