@@ -4,7 +4,7 @@ Developed by TJ Massinger for use in the LVC.
 
 The purpose of this code is to generate an appropriate set of condor dag and sub files to search for ADC/DAC overflows and generate sngl_burst XML files containing triggers. The generated DAG will call the executable <b>gen_overflow_trigs.sh</b>, which is a wrapper around the python script <b>gen_single_channel_trigs.py</b>.
 
-*** This code does not currently perform a segment database query due to the fact that the average user doesn't have a robot cert to perform segment database query from a Condor process ***
+<i>*** This code does not currently perform a segment database query due to the fact that the average user doesn't have a robot cert to perform segment database query from a Condor process. I would suggest using start and end times that bound a continuously locked period. ***</i>
 
 
 Instructions for running on an LDAS cluster:
