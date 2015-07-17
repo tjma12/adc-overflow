@@ -7,8 +7,8 @@ import sys
 #usage: %prog --gps-start-time --gps-end-time --channel-list 
 start_gps = float(sys.argv[1])
 end_gps = float(sys.argv[2])
-ifo = 'H'
-frames = 'H1_M'
+ifo = str(sys.argv[5])
+frames = ifo + '1_M'
 channel_list = str(sys.argv[3])
 out_file = str(sys.argv[4])
 

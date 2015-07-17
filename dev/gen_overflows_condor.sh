@@ -17,7 +17,7 @@ mkdir -p ${basedir}/condor_dag/log_${start_time}_ADC
 source /home/detchar/opt/gwpysoft/etc/gwpy-user-env.sh
 
 # find minute-trend frames and generate list of model-wide overflow channels
-frame=`gw_data_find -n -o ${ifo} -t ${ifo}1_M -s ${start_time} -e ${start_time} | head -n 1`
+frame=`gw_data_find -n -o ${ifo} -t ${ifo}1_M -s ${start_time} -e ${start_time} |grep 'archive' | head -n 1`
 chan_list="all_model_overflow_chans_${start_time}_${end_time}.txt"
 
 FrChannels ${frame} | grep 'FEC' | grep 'ACCUM_OVERFLOW' | grep 'max' | cut -d ' ' -f 1 > ${basedir}/${chan_list}
@@ -29,7 +29,7 @@ overflow_chans="overflowing_model_chans_${start_time}_${end_time}.txt"
 
 echo "Calculating which models have at least one overflow channel"
 
-python plot_overflow_accum.py ${start_time} ${end_time} ${basedir}/${chan_list} ${basedir}/${overflow_chans}
+python plot_overflow_accum.py ${start_time} ${end_time} ${basedir}/${chan_list} ${basedir}/${overflow_chans} ${ifo}
 
 if [ ! -s ${basedir}/${overflow_chans} ]; then
 	echo "No overflowing models found! Exiting script"
