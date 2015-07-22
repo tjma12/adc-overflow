@@ -48,7 +48,10 @@ def read_command_line():
     else:
         frames = 'H1_R'
 
-    segments = np.loadtxt(seg_list,dtype=str)
+    segments = []
+    seg_read = open(seg_list)
+    for line in seg_read.readlines():
+        segments.append(map(int,line.split()))
 
     return channel, gps_start, gps_end, ifo, frames, outdir, segments
 
@@ -101,7 +104,7 @@ def generate_triggers(channel,gps_start,gps_end,ifo,frames,outdir,segments):
                 trigger_vec.append(time_vec[j+1])
 
 
-    if (np.size(trig_segs) == 0):
+    if (np.size(trigger_vec) == 0):
         print "No triggers found for " + str(channel)
         return
     else:
@@ -132,13 +135,13 @@ def generate_triggers(channel,gps_start,gps_end,ifo,frames,outdir,segments):
     xmldoc_up.childNodes[0].appendChild(sngl_burst_table_up)
 
     directory_up = (outdir + '/' + channel[:2] + "/" + 
-    channel[3:] + "_UP/" + str(gps_start)[:5] + "/")
+    channel[3:] + "/" + str(gps_start)[:5] + "/")
 
     if not os.path.exists(directory_up):
         os.makedirs(directory_up)
         
     utils.write_filename(xmldoc_up, directory_up + channel[:2] + "-" + channel[3:6] +
-    "_" + channel[7:] + "_UP_ADC-" + str(gps_start) + "-" + str(gps_end - gps_start) + 
+    "_" + channel[7:] + "_ADC-" + str(gps_start) + "-" + str(gps_end - gps_start) + 
     ".xml.gz", gz=True)
 
 

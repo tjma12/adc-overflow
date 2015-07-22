@@ -4,7 +4,8 @@ start_time=$1
 end_time=$2
 ifo=$3
 outdir=$4
-model_info=$5
+trigger_dir=$5
+seg_list=$6
 
 basedir="${outdir}/${start_time}_${end_time}"
 
@@ -64,10 +65,10 @@ numchans=`wc -l ${basedir}/${followup_list} | cut -d ' ' -f 1`
 
 python make_dag_ADC.py ${numchans} ${start_time} ${end_time} ${basedir}
 
-python make_sub_ADC.py ${basedir} ${start_time} ${end_time} ${basedir}/${followup_list} ${ifo} ${model_info}
+python make_sub_ADC.py ${basedir} ${start_time} ${end_time} ${basedir}/${followup_list} ${ifo} ${trigger_dir} ${seg_list}
 
-cp gen_overflow_trigs.sh ${basedir}/condor_dag/gen_overflow_trigs.sh
-cp gen_single_channel_trigs.py ${basedir}/condor_dag/gen_single_channel_trigs.py
+cp gen_overflow_acc_trigs.sh ${basedir}/condor_dag/gen_overflow_trigs.sh
+cp gen_single_channel_acc_trigs.py ${basedir}/condor_dag/gen_single_channel_trigs.py
 
 echo "Created DAG and submit files in condor_dag directory"
 
