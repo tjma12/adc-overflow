@@ -56,7 +56,7 @@ def read_command_line():
 # functions to find the start of overflow segments
 # if x and y are equal in value and z jumps, we'll pull off the timestamp attached to z
 # and record that as the beginning of a segment
-def startCumuSegTest(x,y,z):
+def cumu_seg_test(x,y,z):
     if (x == y < z):
         return True
     else:
@@ -85,21 +85,21 @@ def generate_triggers(channel,gps_start,gps_end,ifo,frames,outdir,segments):
 
     '''
 
-    trig_segs = seg.segmentlist()
+#    trig_segs = seg.segmentlist()
+#
+#    for j in np.arange(np.size(data,0)):
+#        if (0 < j < (np.size(data,0) - 1)):
+#            if cumu_seg_test(data[j-1],data[j],data[j+1]):
+#                trig_segs |= seg.segmentlist([seg.segment(time_vec[j+1],time_vec[j+1]+1)])
+#
+#    trig_segs = trig_segs.coalesce()
 
-    if checkCumulative(channel,model_list,ndcuid_list):
-        for j in np.arange(np.size(data,0)):
-            if (0 < j < (np.size(data,0) - 1)):
-                if startCumuSegTest(data[j-1],data[j],data[j+1]):
-                    trig_segs |= seg.segmentlist([seg.segment(time_vec[j+1],time_vec[j+1]+1)])
-    else:
-        for j in np.arange(np.size(data,0)):
-            if (0 < j < (np.size(data,0) - 1)):
-                if startSegTest(data[j-1],data[j],data[j+1]):
-                    trig_segs |= seg.segmentlist([seg.segment(time_vec[j+1],time_vec[j+1]+1)])
-                            
+    trigger_vec = []
+    for j in np.arange(np.size(data,0)):
+        if (0 < j < (np.size(data,0) - 1)):
+            if cumu_seg_test(data[j-1],data[j],data[j+1]):
+                trigger_vec.append(time_vec[j+1])
 
-    trig_segs = trig_segs.coalesce()
 
     if (np.size(trig_segs) == 0):
         print "No triggers found for " + str(channel)
@@ -107,73 +107,38 @@ def generate_triggers(channel,gps_start,gps_end,ifo,frames,outdir,segments):
     else:
         print "Found triggers for " + str(channel)
         
-        
-    # make vectors of up and down transitions and feed into XML output
-    up_trigger_vec = [] 
-    for i in np.arange(np.size(trig_segs,0)):
-        up_trigger_vec.append(trig_segs[i][0] - 0.5)
-        
-    down_trigger_vec = []
-    for i in np.arange(np.size(trig_segs,0)):
-        down_trigger_vec.append(trig_segs[i][1] - 0.5)
-
-
     # map triggers into float type and then convert them all into LIGOTimeGPS notation
-    up_trig_times = map(LIGOTimeGPS,map(float,up_trigger_vec))
-    down_trig_times = map(LIGOTimeGPS,map(float,down_trigger_vec))
+    trig_times = map(LIGOTimeGPS,map(float,trigger_vec))
 
     # create mocked up frequency and SNR vectors to fill in XML tables
-    freqs = np.empty(np.size(up_trigger_vec))
+    freqs = np.empty(np.size(trigger_vec))
     freqs.fill(100)
-    snrs = np.empty(np.size(up_trigger_vec))
+    snrs = np.empty(np.size(trigger_vec))
     snrs.fill(10)
 
 
     sngl_burst_table_up = lsctables.New(lsctables.SnglBurstTable, ["peak_time", "peak_time_ns","peak_frequency","snr"])
-    sngl_burst_table_down = lsctables.New(lsctables.SnglBurstTable, ["peak_time", "peak_time_ns","peak_frequency","snr"])
 
-
-    for t,f,s in zip(up_trig_times, freqs, snrs):
+    for t,f,s in zip(trig_times, freqs, snrs):
         row = sngl_burst_table_up.RowType()
         row.set_peak(t)
         row.peak_frequency = f
         row.snr = s
         sngl_burst_table_up.append(row)
         
-    for t,f,s in zip(down_trig_times, freqs, snrs):
-        row = sngl_burst_table_down.RowType()
-        row.set_peak(t)
-        row.peak_frequency = f
-        row.snr = s
-        sngl_burst_table_down.append(row)
-
 
     xmldoc_up = ligolw.Document()
     xmldoc_up.appendChild(ligolw.LIGO_LW())
     xmldoc_up.childNodes[0].appendChild(sngl_burst_table_up)
 
-    xmldoc_down = ligolw.Document()
-    xmldoc_down.appendChild(ligolw.LIGO_LW())
-    xmldoc_down.childNodes[0].appendChild(sngl_burst_table_down)
-
     directory_up = (outdir + '/' + channel[:2] + "/" + 
     channel[3:] + "_UP/" + str(gps_start)[:5] + "/")
-
-    directory_down = (outdir + '/' + channel[:2] + "/" + 
-    channel[3:] + "_DOWN/" + str(gps_start)[:5] + "/")
 
     if not os.path.exists(directory_up):
         os.makedirs(directory_up)
         
-    if not os.path.exists(directory_down):
-        os.makedirs(directory_down)
-
     utils.write_filename(xmldoc_up, directory_up + channel[:2] + "-" + channel[3:6] +
     "_" + channel[7:] + "_UP_ADC-" + str(gps_start) + "-" + str(gps_end - gps_start) + 
-    ".xml.gz", gz=True)
-
-    utils.write_filename(xmldoc_down, directory_down + channel[:2] + "-" + channel[3:6] +
-    "_" + channel[7:] + "_DOWN_ADC-" + str(gps_start) + "-" + str(gps_end - gps_start) + 
     ".xml.gz", gz=True)
 
 

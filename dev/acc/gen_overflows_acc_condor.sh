@@ -55,8 +55,8 @@ followup_list="individual_overflow_chans_${start_time}_${end_time}.txt"
 rawframe=`gw_data_find -n -o ${ifo} -t ${ifo}1_R -s ${start_time} -e ${start_time} | head -n 1`
 
 while read i; do
-	FrChannels ${rawframe} | grep 'FEC' | grep -E 'ADC_OVERFLOW_[0-9]' | grep "C-${i}_"
-	FrChannels ${rawframe} | grep 'FEC' | grep -E 'DAC_OVERFLOW_[0-9]' | grep "C-${i}_"
+	FrChannels ${rawframe} | grep 'FEC' | grep -E 'ADC_OVERFLOW_ACC_[0-9]' | grep "C-${i}_"
+	FrChannels ${rawframe} | grep 'FEC' | grep -E 'DAC_OVERFLOW_ACC_[0-9]' | grep "C-${i}_"
 done < ${basedir}/${overflow_ndcuid} | cut -d ' ' -f 1 > ${basedir}/${followup_list}
 
 # generate condor DAG and submit files
