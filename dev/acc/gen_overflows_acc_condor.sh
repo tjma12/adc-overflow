@@ -21,7 +21,11 @@ source /home/detchar/opt/gwpysoft/etc/gwpy-user-env.sh
 frame=`gw_data_find -n -o ${ifo} -t ${ifo}1_M -s ${start_time} -e ${start_time} |grep 'archive' | head -n 1`
 chan_list="all_model_overflow_chans_${start_time}_${end_time}.txt"
 
-FrChannels ${frame} | grep 'FEC' | grep 'ACCUM_OVERFLOW' | grep 'max' | cut -d ' ' -f 1 > ${basedir}/${chan_list}
+FECchannels="all_FEC_channels_${start_time}_${end_time}.txt"
+
+FrChannels ${frame} | grep 'FEC' > ${basedir}/${FECchannels}
+
+cat ${basedir}/${FECchannels} | grep 'ACCUM_OVERFLOW' | grep 'max' | cut -d ' ' -f 1 > ${basedir}/${chan_list}
 
 echo "Wrote channel list to file ${chan_list}"
 
@@ -56,8 +60,8 @@ followup_list="individual_overflow_chans_${start_time}_${end_time}.txt"
 rawframe=`gw_data_find -n -o ${ifo} -t ${ifo}1_R -s ${start_time} -e ${start_time} | head -n 1`
 
 while read i; do
-	FrChannels ${rawframe} | grep 'FEC' | grep -E 'ADC_OVERFLOW_ACC_[0-9]' | grep "C-${i}_"
-	FrChannels ${rawframe} | grep 'FEC' | grep -E 'DAC_OVERFLOW_ACC_[0-9]' | grep "C-${i}_"
+	cat ${basedir}/${FECchannels} | grep -E 'ADC_OVERFLOW_ACC_[0-9]' | grep "C-${i}_"
+	cat ${basedir}/${FECchannels} | grep -E 'DAC_OVERFLOW_ACC_[0-9]' | grep "C-${i}_"
 done < ${basedir}/${overflow_ndcuid} | cut -d ' ' -f 1 > ${basedir}/${followup_list}
 
 # generate condor DAG and submit files
