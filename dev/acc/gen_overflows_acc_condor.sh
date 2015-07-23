@@ -83,8 +83,8 @@ python make_dag_ADC.py ${numchans} ${start_time} ${end_time} ${basedir}
 
 python make_sub_ADC.py ${basedir} ${start_time} ${end_time} ${basedir}/${followup_list} ${ifo} ${trigger_dir} ${seg_list}
 
-cp gen_overflow_acc_trigs.sh ${basedir}/condor_dag/gen_overflow_trigs.sh
-cp gen_single_channel_acc_trigs.py ${basedir}/condor_dag/gen_single_channel_trigs.py
+cp gen_overflow_acc_trigs.sh ${basedir}/condor_dag/gen_overflow_acc_trigs.sh
+cp gen_single_channel_acc_trigs.py ${basedir}/condor_dag/gen_single_channel_acc_trigs.py
 
 echo "Created DAG and submit files in condor_dag directory"
 

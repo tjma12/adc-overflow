@@ -19,6 +19,7 @@ print >> fP,"Error = log_%s_ADC/err.$(macrojobnumber)" %(st)
 print >> fP,"Output = log_%s_ADC/out.$(macrojobnumber)" %(st)
 print >> fP,"Log = log_%s_ADC/log.$(macrojobnumber)" %(st)
 print >> fP,"Notification = never"
+print >> fP,"accounting_group = ligo.dev.o1.detchar.explore.test"
 print >> fP,"getenv=true"
 print >> fP,"Queue 1"
 
