@@ -26,8 +26,8 @@ ligolw_segment_query_dqsegdb --segment-url https://dqsegdb5.phy.syr.edu --query-
 The resulting segment_list.txt should look like:
 
 ```
-1113014500 1113014806
-1113015909 1113019250
+1117742416 1117743020
+1117745521 1117747816
 ```
 
 #### 3. Run gen_overflows_condor.sh 
