@@ -43,7 +43,7 @@ Syntax:
 Example call:
 
 ```
-./gen_overflows_acc_condor.sh 1117742416 1117747816 H /home/tjmassin/git_repos/adc-overflow/dev/acc/ /home/tjmassin/temp_triggers/ segment_list.txt
+./gen_overflows_acc_condor.sh 1117742416 1117747816 H /home/tjmassin/git_repos/adc-overflow/dev/acc/ /home/tjmassin/temp_triggers/ /home/tjmassin/git_repos/testing-adc-overflow/adc-overflow/dev/acc/segment_list.txt
 ```
 
 The process is as follows:
