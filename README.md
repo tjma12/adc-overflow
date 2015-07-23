@@ -23,9 +23,10 @@ Example call:
 
 The resulting segment_list.txt should look like:
 
-> 1113014500 1113014806
-> 1113015909 1113019250
-
+```
+1113014500 1113014806
+1113015909 1113019250
+```
 
 #### 3. Run gen_overflows_condor.sh 
 
