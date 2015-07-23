@@ -32,7 +32,7 @@ The resulting segment_list.txt should look like:
 
 #### 3. Run gen_overflows_condor.sh 
 
-This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready. It will generate a directory structure containing log files and executables in the designated output directory.
+This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready. It will generate a directory structure containing log files and executables in the designated output directory. All directories and segment lists should be <b> full paths. </b>
 
 Syntax:
 
