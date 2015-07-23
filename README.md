@@ -4,7 +4,7 @@ Developed by TJ Massinger for use in the LVC.
 
 The purpose of this code is to generate an appropriate set of condor dag and sub files to search for ADC/DAC overflows and generate sngl_burst XML files containing triggers. The generated DAG will call the executable <b>gen_overflow_trigs.sh</b>, which is a wrapper around the python script <b>gen_single_channel_trigs.py</b>.
 
-<i>*** This code does not currently perform a segment database query due to the fact that the average user doesn't have a robot cert to perform segment database query from a Condor process. I would suggest using start and end times that bound a continuously locked period. ***</i>
+<i>*** This code does not currently perform a segment database query due to the fact that the average user doesn't have a robot cert to perform segment database query from a Condor process. The user must instead run a segment database query and provide the results as an argument to the program. ***</i>
 
 
 Instructions for running on an LDAS cluster:
@@ -13,45 +13,42 @@ Instructions for running on an LDAS cluster:
 
 source /home/detchar/opt/gwpysoft/etc/gwpy-user-env.sh
 
-#### 2. Update (or checkout) the cds_user_apps SVN that contains the simulink models that run in the front end and monitor saturation events.
+#### 2. Run a segment database query to generate science segments for this time
 
-svn co https://redoubt.ligo-wa.caltech.edu/svn/cds_user_apps/trunk --username albert.einstein
+Results of the segment database query should be piped through ligolw_print and stored in a whitespace delimited text file.
 
-#### 3. Run find_models.sh 
+Example call:
 
-This script will generate an annotated list of models running on the current system. 
+> ligolw_segment_query_dqsegdb --segment-url https://dqsegdb5.phy.syr.edu --query-segments --include-segments H1:DMT-DC_READOUT_LOCKED --gps-start-time 1117742416 --gps-end-time 1117747816 | ligolw_print -t segment -c start_time -c end_time -d ' ' > segment_list.txt
 
-This will parse the .adl file for each model, extract its ndcuid, and annotate the model as either a cumulative overflow channel or a non-cumulative overflow channel.
+The resulting segment_list.txt should look like:
 
-Be sure to provide the directory that <i>contains</i> the trunk directory of cds_user_apps.
+> 1113014500 1113014806
+> 1113015909 1113019250
 
-Syntax: 
-> ./find_models.sh {user_apps directory} {output directory} {H1,L1}
 
-Example call: 
-> ./find_models.sh /home/tjmassin/svn/cds_user_apps/ /home/tjmassin/adc_overflow/test/model_info/ H1
-
-#### 4. Run gen_overflows_condor.sh 
+#### 3. Run gen_overflows_condor.sh 
 
 This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready. It will generate a directory structure containing log files and executables in the designated output directory.
 
 Syntax:
-> ./gen_overflows_condor.sh {start_gps} {end_gps} {L,H} {output directory} {model info}
+> ./gen_overflows_condor.sh {start_gps} {end_gps} {L,H} {build directory} {trigger directory} {segment list}
 
 Example call:
 
-> ./gen_overflows_condor.sh 1118019595 1118019795 H /home/tjmassin/adc_overflow/test /home/tjmassin/adc_overflow/test/model_info/H1_model_info.txt
+> ./gen_overflows_acc_condor.sh 1115740150 1115740300 H /home/tjmassin/git_repos/adc-overflow/dev/acc/ /home/tjmassin/temp_triggers/ segment_list.txt
 
 
 The process is as follows:
 
-a. Set up a directory structure to store all information regarding models and overflow channels, as well as condor log files.
+a. Set up a directory structure to store all information regarding models and overflow channels, as well as condor dag, sub, and log files.
+The location of this structure is specified by the {build directory} argument
 
 b. Grab model-wide cumulative overflow channels to see if any channel in a given model has overflowed during the time period of interest. This is done using <b>plot_overflow_accum.py</b>.
 
 c. Generate a list of models that have at least one overflow.
 
-d. Generate a list of channels contained in those models and mark them for further follow-up.
+d. Generate a list of channels contained in those overflowing models and mark them for further follow-up.
 
 e. Generate condor DAG and sub files that allow the search code to farm the computation out channel-by-channel.
 
