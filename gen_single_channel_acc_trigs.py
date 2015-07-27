@@ -15,10 +15,6 @@ def read_command_line():
         description = "Makes triggers for overflows from a single channel"
             )
 
-    parser.add_option("-s", "--gps-start-time", metavar = "gps_start_time", help = "Start of GPS time range")
-
-    parser.add_option("-e", "--gps-end-time",   metavar = "gps_end_time", help = "End of GPS time range")
-
     parser.add_option("-c", "--channel", metavar = "channel", help="Channel name.")
 
     parser.add_option("-i", "--ifo", metavar = "ifo", help="IFO, L or H")
@@ -26,15 +22,15 @@ def read_command_line():
     parser.add_option("-o", "--outdir", metavar = "outdir", help = "base output directory")
 
     parser.add_option("-l", "--seg-list", metavar = "seg_list", help = "list of segments")
+    parser.add_option("-p", "--padding", metavar = "padding", default = "0", type = "float", help = "padding at end of science segment to avoid lock loss saturations")
 
     args, others = parser.parse_args()
 
     channel = args.channel
-    gps_start = int(args.gps_start_time)
-    gps_end   = int(args.gps_end_time)
     ifo = args.ifo
     outdir = args.outdir
     seg_list = args.seg_list
+    padding = args.padding
     #sanitize IFO input
 
     if ifo == 'L1':
@@ -53,7 +49,7 @@ def read_command_line():
     for line in seg_read.readlines():
         segments.append(map(int,line.split()))
 
-    return channel, gps_start, gps_end, ifo, frames, outdir, segments
+    return channel, ifo, frames, outdir, segments, padding
 
 
 # functions to find the start of overflow segments
@@ -66,12 +62,13 @@ def cumu_seg_test(x,y,z):
         return False
 
 
-def generate_triggers(channel,gps_start,gps_end,ifo,frames,outdir,segments):
-    print "Processing segment: " + str(gps_start) + " - " + str(gps_end)
+def generate_triggers(channel,gps_start,gps_end,ifo,frames,outdir,segments,padding):
     # generate frame cache and connection
+    pad_gps_end = gps_end - padding
+    print "Processing segment: " + str(gps_start) + " - " + str(pad_gps_end)
     connection = datafind.GWDataFindHTTPConnection()
     cache = connection.find_frame_urls(ifo, frames, int(gps_start), int(gps_end), urltype='file')
-    data=TimeSeries.read(cache, channel, start=int(gps_start), end=int(gps_end))
+    data=TimeSeries.read(cache, channel, start=int(gps_start), end=int(pad_gps_end))
 
     time_vec=data.times.value
 
@@ -147,6 +144,9 @@ def generate_triggers(channel,gps_start,gps_end,ifo,frames,outdir,segments):
 
 if __name__=="__main__":
     read_command_line()
-    channel,gps_start,gps_end,ifo,frames,outdir,segments = read_command_line()
+    channel,ifo,frames,outdir,segments,padding = read_command_line()
     for entry in segments:
-        generate_triggers(channel,entry[0],entry[1],ifo,frames,outdir,segments)
+        if (entry[1] - entry[0] > padding):
+            generate_triggers(channel,entry[0],entry[1],ifo,frames,outdir,segments,padding)
+        else:
+            print "Science segment " + str(entry[0]) + " - " + str(entry[1]) + " was shorter than padding window."
