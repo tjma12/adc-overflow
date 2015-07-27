@@ -37,13 +37,13 @@ This script will go through the entire process of generating an appropriate cond
 Syntax:
 
 ```
- ./gen_overflow_acc_condor.sh {start_gps} {end_gps} {L,H} {build directory} {trigger directory} {segment list}
+ ./gen_overflow_acc_condor.sh {start_gps} {end_gps} {L,H} {build directory} {trigger directory} {segment list} {padding}
 ```
 
 Example call:
 
 ```
-./gen_overflow_acc_condor.sh 1117742416 1117747816 H /home/tjmassin/git_repos/adc-overflow/dev/acc/ /home/tjmassin/temp_triggers/ /home/tjmassin/git_repos/testing-adc-overflow/adc-overflow/dev/acc/segment_list.txt
+./gen_overflow_acc_condor.sh 1117742416 1117747816 H /home/tjmassin/git_repos/adc-overflow/dev/acc/ /home/tjmassin/temp_triggers/ /home/tjmassin/git_repos/testing-adc-overflow/adc-overflow/dev/acc/segment_list.txt 10
 ```
 
 The process is as follows:
