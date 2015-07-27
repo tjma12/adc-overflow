@@ -6,6 +6,7 @@ ifo=$3
 outdir=$4
 trigger_dir=$5
 seg_list=$6
+padding=$7
 
 basedir="${outdir}/${start_time}_${end_time}"
 
@@ -36,7 +37,7 @@ overflow_chans="overflowing_model_chans_${start_time}_${end_time}.txt"
 
 echo "Calculating which models have at least one overflow channel"
 
-python plot_overflow_accum.py ${start_time} ${end_time} ${basedir}/${chan_list} ${basedir}/${overflow_chans} ${ifo} ${seg_list}
+python plot_overflow_accum.py ${start_time} ${end_time} ${basedir}/${chan_list} ${basedir}/${overflow_chans} ${ifo} ${seg_list} ${padding}
 
 if [ ! -s ${basedir}/${overflow_chans} ]; then
 	echo "No overflowing models found! Exiting script"
@@ -81,7 +82,7 @@ numchans=`wc -l ${basedir}/${followup_list} | cut -d ' ' -f 1`
 
 python make_dag_ADC.py ${numchans} ${start_time} ${end_time} ${basedir}
 
-python make_sub_ADC.py ${basedir} ${start_time} ${end_time} ${basedir}/${followup_list} ${ifo} ${trigger_dir} ${seg_list}
+python make_sub_ADC.py ${basedir} ${start_time} ${end_time} ${basedir}/${followup_list} ${ifo} ${trigger_dir} ${seg_list} ${padding}
 
 cp gen_overflow_acc_trigs.sh ${basedir}/condor_dag/gen_overflow_acc_trigs.sh
 cp gen_single_channel_acc_trigs.py ${basedir}/condor_dag/gen_single_channel_acc_trigs.py

@@ -12,6 +12,9 @@ out_file = str(sys.argv[4])
 ifo = str(sys.argv[5])
 frames = ifo + '1_M'
 seg_file = str(sys.argv[6])
+padding = float(sys.argv[7])
+
+
 
 fP = open(out_file,'w')
 
@@ -32,10 +35,11 @@ cache = connection.find_frame_urls(ifo, frames, start_gps, end_gps, urltype='fil
 for chan in chan_list:
     chan1 = chan[:-1]
     for seg in seg_list:
-        data1=TimeSeries.read(cache, chan1, start=seg[0], end=seg[1])
-        if any(diff(data1.value)>0):
-            print >> fP, chan1
-            break
+        if (seg[1] - seg[0] > padding):
+            data1=TimeSeries.read(cache, chan1, start=seg[0], end=(seg[1] - padding))
+            if any(diff(data1.value)>0):
+                print >> fP, chan1
+                break
 
 
 fP.close()
