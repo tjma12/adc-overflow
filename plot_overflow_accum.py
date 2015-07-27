@@ -2,17 +2,38 @@ from gwpy.timeseries import TimeSeries
 from glue import datafind
 from numpy import diff
 import sys
+from optparse import OptionParser
 
+parser = OptionParser(
+    version = " ",
+    usage = "%prog --start_gps --end_gps --chan_list --output_file --ifo --segments --padding",
+    description = "Finds models that have at least one saturation in them.")
+
+parser.add_option("-s","--start-gps",metavar = "start_gps", help = "GPS start time",type="float")
+
+parser.add_option("-e","--end-gps",metavar = "end_gps", help = "GPS end time ",type="float")
+
+parser.add_option("-c","--chan-list",metavar = "chan_list", help = "Channel list",type="string")
+
+parser.add_option("-o","--outfile",metavar = "outfile", help = "Output file",type="string")
+
+parser.add_option("-i","--ifo",metavar = "ifo", help = "IFO",type="string")
+
+parser.add_option("-l","--seg-file",metavar = "seg_file", help = "Segments",type="string")
+
+parser.add_option("-p","--padding",metavar = "padding", help = "Padding",type="float")
+
+args,others = parser.parse_args()
 
 #usage: %prog --gps-start-time --gps-end-time --channel-list 
-start_gps = float(sys.argv[1])
-end_gps = float(sys.argv[2])
-channel_list = str(sys.argv[3])
-out_file = str(sys.argv[4])
-ifo = str(sys.argv[5])
+start_gps = args.start_gps
+end_gps = args.end_gps
+channel_list = args.chan_list
+out_file = args.outfile
+ifo = args.ifo
 frames = ifo + '1_M'
-seg_file = str(sys.argv[6])
-padding = float(sys.argv[7])
+seg_file = args.seg_file
+padding = args.padding
 
 
 
