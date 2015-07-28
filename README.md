@@ -32,7 +32,7 @@ The resulting segment_list.txt should look like:
 
 #### 3. Run gen_overflows_condor.sh 
 
-This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready. It will generate a directory structure containing log files and executables in the designated output directory. All directories and segment lists should be <b> full paths. </b> The padding argument will remove a number of seconds from the end of each science segment.
+This script will go through the entire process of generating an appropriate condor DAG that should be submit-ready. It will generate a directory structure containing log files and executables in the designated output directory. All directories and segment lists should be <b> full paths. </b> The padding argument will remove a number of seconds from the end of each science segment. The example below uses a 10-second pre-lockloss padding to avoid seeing overflows that result from lock loss transients. If you do not want any padding, enter a zero as the last argument.
 
 Syntax:
 
