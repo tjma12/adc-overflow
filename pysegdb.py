@@ -4,7 +4,7 @@ from glue import segments as seg
 
 def find_segments(ifo,start_time,length,DQFlag):
     # example: ifo='H1',DQFlag='DMT-ANALYSIS_READY'
-    seg_dict=apicalls.dqsegdbQueryTimes('https','dqsegdb5.phy.syr.edu',ifo,DQFlag,'1','active,known,metadata',start_time,start_time+length)
+    seg_dict=apicalls.dqsegdbQueryTimes('https','segments.ligo.org',ifo,DQFlag,'1','active,known,metadata',start_time,start_time+length)
     return seg_dict
 
 def coalesce_result_dictionary(result_dict):
